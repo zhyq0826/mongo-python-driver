@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 # Copyright 2014-present MongoDB, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -28,7 +29,7 @@ TOPOLOGY_TYPE = namedtuple('TopologyType', ['Single', 'ReplicaSetNoPrimary',
                                             'ReplicaSetWithPrimary', 'Sharded',
                                             'Unknown'])(*range(5))
 
-
+# 代表整个 server 的部署情况
 class TopologyDescription(object):
     def __init__(self,
                  topology_type,

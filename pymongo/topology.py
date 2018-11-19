@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright 2014-present MongoDB, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -472,7 +473,9 @@ class Topology(object):
                 self.__events_executor.open()
 
         # Ensure that the monitors are open.
+        # _servers 是 address 和 Server
         for server in itervalues(self._servers):
+            # open 也是 monitor 的 open
             server.open()
 
     def _reset_server(self, address):
@@ -510,6 +513,7 @@ class Topology(object):
         """
         for address, sd in self._description.server_descriptions().items():
             if address not in self._servers:
+                # monitor 一个 pool monitor 没有 handshake
                 monitor = self._settings.monitor_class(
                     server_description=sd,
                     topology=self,
@@ -519,6 +523,8 @@ class Topology(object):
                 weak = None
                 if self._publish_server:
                     weak = weakref.ref(self._events)
+                # 代表 server
+                # server 一个 pool 有 handshake
                 server = Server(
                     server_description=sd,
                     pool=self._create_pool_for_server(address),
@@ -528,6 +534,7 @@ class Topology(object):
                     events=weak)
 
                 self._servers[address] = server
+                # monitor start
                 server.open()
             else:
                 self._servers[address].description = sd
@@ -554,7 +561,7 @@ class Topology(object):
             event_listeners=options.event_listeners,
             appname=options.appname,
             driver=options.driver)
-
+        # 一个 server 一个 pool
         return self._settings.pool_class(address, monitor_pool_options,
                                          handshake=False)
 

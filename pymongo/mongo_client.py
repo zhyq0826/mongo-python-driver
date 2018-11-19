@@ -1,3 +1,5 @@
+# -*- coding:utf-8 -*-
+
 # Copyright 2009-present MongoDB, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -503,16 +505,18 @@ class MongoClient(common.BaseObject):
             port = self.PORT
         if not isinstance(port, int):
             raise TypeError("port must be an instance of int")
-
+        # (ip, port), (ip, port)
         seeds = set()
         username = None
         password = None
         dbase = None
         opts = {}
+        # 解析 host port username 等连接信息
         for entity in host:
             if "://" in entity:
                 res = uri_parser.parse_uri(entity, port, warn=True)
                 seeds.update(res["nodelist"])
+                # (host, port)
                 username = res["username"] or username
                 password = res["password"] or password
                 dbase = res["database"] or dbase
@@ -550,6 +554,7 @@ class MongoClient(common.BaseObject):
                 "https://docs.mongodb.com/manual/faq/diagnostics/"
                 "#does-tcp-keepalive-time-affect-mongodb-deployments",
                 DeprecationWarning, stacklevel=2)
+        # client 连接信息
         self.__options = options = ClientOptions(
             username, password, dbase, opts)
 
@@ -557,7 +562,7 @@ class MongoClient(common.BaseObject):
         self.__lock = threading.Lock()
         self.__cursor_manager = None
         self.__kill_cursors_queue = []
-
+        # 全局事件监听
         self._event_listeners = options.pool_options.event_listeners
 
         # Cache of existing indexes used by ensure_index ops.
@@ -572,22 +577,24 @@ class MongoClient(common.BaseObject):
         self.__all_credentials = {}
         creds = options.credentials
         if creds:
+            # 认证信息
             self._cache_credentials(creds.source, creds)
 
         self._topology_settings = TopologySettings(
             seeds=seeds,
             replica_set_name=options.replica_set_name,
-            pool_class=pool_class,
+            pool_class=pool_class, # pool.Pool
             pool_options=options.pool_options,
-            monitor_class=monitor_class,
-            condition_class=condition_class,
+            monitor_class=monitor_class, # monitor.monitor,
+            condition_class=condition_class, # thread condition
             local_threshold_ms=options.local_threshold_ms,
-            server_selection_timeout=options.server_selection_timeout,
-            server_selector=options.server_selector,
-            heartbeat_frequency=options.heartbeat_frequency)
+            server_selection_timeout=options.server_selection_timeout, # server selection 超时时间
+            server_selector=options.server_selector, # 一个函数
+            heartbeat_frequency=options.heartbeat_frequency) # 心跳检测常量
 
         self._topology = Topology(self._topology_settings)
         if connect:
+            # 开始监听 monitor start
             self._topology.open()
 
         def target():
