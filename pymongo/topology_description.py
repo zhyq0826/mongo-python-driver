@@ -227,6 +227,7 @@ class TopologyDescription(object):
             fastest = min(
                 s.round_trip_time for s in selection.server_descriptions)
             threshold = settings.local_threshold_ms / 1000.0
+            # 根据 round trip time 计算出最快的 和 local threold 比较 挑选出 合适的 server
             return [s for s in selection.server_descriptions
                     if (s.round_trip_time - fastest) <= threshold]
 

@@ -103,8 +103,10 @@ class Server(object):
                 start = datetime.now()
 
             try:
+                print(data)
                 sock_info.send_message(data, max_doc_size)
                 reply = sock_info.receive_message(request_id)
+                print reply
             except Exception as exc:
                 if publish:
                     duration = (datetime.now() - start) + encoding_duration

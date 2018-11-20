@@ -166,7 +166,7 @@ class _TestPoolingBase(unittest.TestCase):
             pair=(client_context.host, client_context.port),
             *args,
             **kwargs):
-        # Start the pool with the correct ssl options.
+        # Start the pool with the correct ssl option.
         pool_options = client_context.client._topology_settings.pool_options
         kwargs['ssl_context'] = pool_options.ssl_context
         kwargs['ssl_match_hostname'] = pool_options.ssl_match_hostname

@@ -198,7 +198,7 @@ class Topology(object):
             if timeout == 0 or now > end_time:
                 raise ServerSelectionTimeoutError(
                     self._error_message(selector))
-
+            # 没有合适的 server 重新打开 server 的连接
             self._ensure_opened()
             self._request_check_all()
 
