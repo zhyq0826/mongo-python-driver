@@ -47,6 +47,7 @@ from pymongo.errors import (ConfigurationError,
                             ProtocolError)
 from pymongo.read_concern import DEFAULT_READ_CONCERN
 from pymongo.read_preferences import ReadPreference
+from pymongo import logger
 
 
 MAX_INT32 = 2147483647
@@ -1382,6 +1383,7 @@ class _OpReply(object):
             errobj = {"ok": 0, "errmsg": msg, "code": 43}
             raise CursorNotFound(msg, 43, errobj)
         elif self.flags & 2:
+            print(self.documents)
             error_object = bson.BSON(self.documents).decode()
             # Fake the ok field if it doesn't exist.
             error_object.setdefault("ok", 0)
@@ -1428,10 +1430,10 @@ class _OpReply(object):
         """Construct an _OpReply from raw bytes."""
         # PYTHON-945: ignore starting_from field.
         flags, cursor_id, _, number_returned = cls.UNPACK_FROM(msg)
-
         # Convert Python 3 memoryview to bytes. Note we should call
         # memoryview.tobytes() if we start using memoryview in Python 2.7.
         documents = bytes(msg[20:])
+        logger.info(documents)
         return cls(flags, cursor_id, number_returned, documents)
 
 

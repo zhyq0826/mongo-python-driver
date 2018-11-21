@@ -74,6 +74,16 @@ def get_version_string():
 __version__ = version = get_version_string()
 """Current version of PyMongo."""
 
+import logging
+
+_formatter = logging.Formatter(
+    '%(levelname)s:%(asctime)s %(module)s:%(lineno)d:%(funcName)s %(message)s')
+
+ch = logging.StreamHandler()
+ch.setFormatter(_formatter)
+logger = logging.root
+logger.addHandler(ch)
+logger.setLevel(logging.DEBUG)
 from pymongo.collection import ReturnDocument
 from pymongo.common import (MIN_SUPPORTED_WIRE_VERSION,
                             MAX_SUPPORTED_WIRE_VERSION)
@@ -89,6 +99,7 @@ from pymongo.operations import (IndexModel,
                                 ReplaceOne)
 from pymongo.read_preferences import ReadPreference
 from pymongo.write_concern import WriteConcern
+
 
 def has_c():
     """Is the C extension installed?"""
