@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Copyright 2015-present MongoDB, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -133,7 +135,7 @@ will not add that listener to existing client instances.
   If you intend to modify them in any way you must copy them in your event
   handler first.
 """
-
+# 所有监听者 listener 事件 event 命令的发布
 import sys
 import traceback
 
@@ -716,6 +718,7 @@ class _EventListeners(object):
 
     def publish_command_start(self, command, database_name,
                               request_id, connection_id, op_id=None):
+        # 发布某个命令到监听者
         """Publish a CommandStartedEvent to all command listeners.
 
         :Parameters:

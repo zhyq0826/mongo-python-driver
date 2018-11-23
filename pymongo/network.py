@@ -44,7 +44,7 @@ from pymongo.errors import (AutoReconnect,
                             OperationFailure,
                             ProtocolError)
 from pymongo.message import _UNPACK_REPLY
-
+from pymongo import logger
 
 _UNPACK_HEADER = struct.Struct("<iiii").unpack
 
@@ -133,6 +133,7 @@ def command(sock, dbname, spec, slave_ok, is_mongos,
         start = datetime.datetime.now()
 
     try:
+        logger.debug(msg)
         sock.sendall(msg)
         if use_op_msg and unacknowledged:
             # Unacknowledged, fake a successful command response.

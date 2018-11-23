@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Copyright 2014-present MongoDB, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -55,7 +56,7 @@ class Monitor(object):
                 return False  # Stop the executor.
             Monitor._run(monitor)
             return True
-
+        # 一个周期性函数，执行特定的 target 来检测服务端的状况
         executor = periodic_executor.PeriodicExecutor(
             interval=self._settings.heartbeat_frequency,
             min_interval=common.MIN_HEARTBEAT_INTERVAL,
@@ -95,6 +96,7 @@ class Monitor(object):
 
     def _run(self):
         try:
+            # monitor 执行 ismaster 检查
             self._server_description = self._check_with_retry()
             self._topology.on_change(self._server_description)
         except ReferenceError:
@@ -155,6 +157,7 @@ class Monitor(object):
         if self._publish:
             self._listeners.publish_server_heartbeat_started(address)
         with self._pool.get_socket({}) as sock_info:
+            # 监视 master 并且记录 rtt
             response, round_trip_time = self._check_with_socket(sock_info)
             self._avg_round_trip_time.add_sample(round_trip_time)
             sd = ServerDescription(

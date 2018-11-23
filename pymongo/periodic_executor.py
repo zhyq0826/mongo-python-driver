@@ -1,3 +1,5 @@
+#-*- coding:utf-8 -*-
+
 # Copyright 2014-present MongoDB, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you
@@ -105,13 +107,15 @@ class PeriodicExecutor(object):
     def __should_stop(self):
         with self._lock:
             if self._stopped:
-                self._thread_will_exit = True
+                self._thread_will_exit = True  # 线程准备退出
                 return True
             return False
 
     def _run(self):
         while not self.__should_stop():
             try:
+                # 执行 target 如果不返回 true 则准备停止
+                # 返回 false 说明 monitor 的执行中引用的 monitor 开始 free 了
                 if not self._target():
                     self._stopped = True
                     break
@@ -170,5 +174,5 @@ def _shutdown_executors():
             executor.join(1)
 
     executor = None
-
+# 解释器退出的时候用来执行清理
 atexit.register(_shutdown_executors)

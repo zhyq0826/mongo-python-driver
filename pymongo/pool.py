@@ -483,6 +483,7 @@ class SocketInfo(object):
         if self.max_wire_version >= 6 and cluster_time is not None:
             cmd['$clusterTime'] = cluster_time
 
+        # 执行 master 命令并得到结果
         ismaster = IsMaster(self.command('admin', cmd, publish_events=False))
         self.is_writable = ismaster.is_writable
         self.max_wire_version = ismaster.max_wire_version
@@ -1010,6 +1011,7 @@ class Pool:
             self.return_socket(sock_info)
             raise
         else:
+            # 在 with 语句退出时 返回给 pool
             if not checkout:
                 self.return_socket(sock_info)
 
@@ -1037,7 +1039,9 @@ class Pool:
                     # Can raise ConnectionFailure.
                     sock_info = self.sockets.popleft()
             except IndexError:
+                # 表示没有 socket
                 # Can raise ConnectionFailure or CertificateError.
+                # 新创建一个
                 sock_info = self.connect()
             else:
                 # Can raise ConnectionFailure.
